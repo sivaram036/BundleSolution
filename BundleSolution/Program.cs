@@ -1,5 +1,4 @@
 ﻿using BundleSolution;
-using System.Security.Cryptography;
 
 GeneralTree<BundleElement> bike = new GeneralTree<BundleElement>(new BundleElement("Bike"));
 GeneralTree<BundleElement> seat = new GeneralTree<BundleElement>(new BundleElement("Seat", 1, 50));
@@ -14,35 +13,30 @@ bike.AddSubTree(seat);
 bike.AddSubTree(pedal);
 bike.AddSubTree(wheel);
 
-var result = bike.Preorder();
-
-foreach (var r in result)
-{
-    Console.WriteLine($"Name - {r.Name}; Units - {r.Units}; Inventory - {r.Inventory};");
-}
-
-Console.WriteLine();
 Console.WriteLine($"Maximum number of bundles we can construct with Inventory: {ComputeMaxBundleCount(bike)}");
 
+// Compute method to find out the Maximum number of bundles we can construct with Inventory
 int ComputeMaxBundleCount(GeneralTree<BundleElement> elements)
 {
-    if (elements.IsLeaf())
-        return 0;
-    var firstElement = ((GeneralTree<BundleElement>)elements.GetChildren(0)).GetRoot();
-    int min = firstElement.Inventory / firstElement.Units;
-    return ComputeMaxBundleCountHelper(elements, ref min, 1);
+    if (elements.IsLeaf()) // checking the edge case if the bundle has any parts or not. if not returns Zero
+        return elements.GetRoot().Inventory / elements.GetRoot().Units;
+
+    int minBundles = Int32.MaxValue; //Initializing minimum bundle we can construct to Maximum passible value
+
+    return ComputeMaxBundleCountHelper(elements, ref minBundles, 1);
 }
 
-int ComputeMaxBundleCountHelper(GeneralTree<BundleElement> elements, ref int min, int totalUnits)
+//self invoked helper function 
+int ComputeMaxBundleCountHelper(GeneralTree<BundleElement> elements, ref int minBundles, int totalUnits)
 {
-    if (!elements.IsLeaf())
+    if (!elements.IsLeaf()) 
     {
-        totalUnits = totalUnits * elements.GetRoot().Units;
+        totalUnits = totalUnits * elements.GetRoot().Units; 
     }
 
     for (int i = 0; i < elements.NumberSubTrees(); i++)
     {
-        ComputeMaxBundleCountHelper(((GeneralTree<BundleElement>)elements.GetChildren(i)), ref min, totalUnits);
+        ComputeMaxBundleCountHelper(((GeneralTree<BundleElement>)elements.GetChildren(i)), ref minBundles, totalUnits);
     }
 
     var root = elements.GetRoot();
@@ -50,8 +44,8 @@ int ComputeMaxBundleCountHelper(GeneralTree<BundleElement> elements, ref int min
     if (elements.IsLeaf())
     {
         var partStock = root.Inventory / (totalUnits * root.Units);
-        if (min > partStock)
-            min = partStock;
+        if (minBundles > partStock)
+            minBundles = partStock;
     }
-    return min;
+    return minBundles;
 }

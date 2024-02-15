@@ -9,7 +9,6 @@ namespace BundleSolution
     public interface ITree<T>
     {
         void AddSubTree(ITree<T> subtree);
-        List<T> Preorder();
         bool IsLeaf();
         int NumberSubTrees();
     }
