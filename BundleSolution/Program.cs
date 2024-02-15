@@ -13,7 +13,7 @@ bike.AddSubTree(seat);
 bike.AddSubTree(pedal);
 bike.AddSubTree(wheel);
 
-Console.WriteLine($"Maximum number of bundles we can construct with Inventory: {ComputeMaxBundleCount(bike)}");
+Console.WriteLine($"Maximum number of bikes we can construct with Inventory: {ComputeMaxBundleCount(bike)}");
 
 // Compute method to find out the Maximum number of bundles we can construct with Inventory
 int ComputeMaxBundleCount(GeneralTree<BundleElement> elements)
