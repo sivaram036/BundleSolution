@@ -1,4 +1,7 @@
-﻿using BundleSolution;
+﻿using AutoMapper;
+using BundleSolution;
+using BundleSolution.Data;
+using BundleSolution.Model;
 
 GeneralTree<BundleElement> bike = new GeneralTree<BundleElement>(new BundleElement("Bike"));
 GeneralTree<BundleElement> seat = new GeneralTree<BundleElement>(new BundleElement("Seat", 1, 50));
@@ -49,3 +52,22 @@ int ComputeMaxBundleCountHelper(GeneralTree<BundleElement> elements, ref int min
     }
     return minBundles;
 }
+
+SaveBundleRoot();
+void SaveBundleRoot()
+{
+    //using automapper to convert the object to entity, we can do this in a separate file but just for time being keeping this here 
+    var config = new MapperConfiguration(cfg => cfg.CreateMap<BundleElement, BundleEntity>());
+
+    var mapper = config.CreateMapper();
+    var root = new BundleElement("Bike");
+    BundleEntity dto = mapper.Map<BundleEntity>(root);
+
+    using var context = new BundleContext();
+    if(!context.Bundles.Any(x => x.Name == "Bike"))
+    {
+        context.Bundles.Add(dto);
+        context.SaveChanges();
+    }
+}
+
